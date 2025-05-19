@@ -17,6 +17,9 @@ public class PlayerMovement : Character {
     [SerializeField] private OnWallState _wallStateSO;
     private OnWallState OnWallState;
 
+    [SerializeField] private LedgeGrabState _ledgeGrabStateSO;
+    private LedgeGrabState LedgeGrabState;
+
     private void Start() {
         GroundedState = Instantiate(_groundedStateSO);
         GroundedState.SetBlackBoard(this);
@@ -27,27 +30,29 @@ public class PlayerMovement : Character {
         OnWallState = Instantiate(_wallStateSO);
         OnWallState.SetBlackBoard(this);
 
+        LedgeGrabState = Instantiate(_ledgeGrabStateSO);
+        LedgeGrabState.SetBlackBoard(this);
+
         StateMachine.Set(GroundedState);
 
+
+        HangOffset = RightLedgeGrab.transform.position - transform.position;
         ApplyFallingGravity();
     }
     private void Update() {
-        if (ApplyWalkingSpeedLimit) {
-            LimitWalkingSpeed();
-        }
 
         SelectState();
 
         StateMachine.CurrentState.OnUpdate();
     }
     private void FixedUpdate() {
-        if (!DisableHorizontalMovement) {
-            MoveWithInput();
+        HandleMoveInput();
+        HandleJumpInput();
+
+
+        if (ApplyWalkingSpeedLimit) {
+            LimitWalkingSpeed();
         }
-        JumpWithInput();
-
-
-        LimitWalkingSpeed();
         ApplyHorizontalDrag();
         FaceMovementDirection();
         RoundHorizontalVelocityToZero();
@@ -61,7 +66,10 @@ public class PlayerMovement : Character {
                 StateMachine.Set(GroundedState);
             }
             else {
-                if (IsGrabbingWall != 0) {
+                if(IsGrabbingLedge !=0) {
+                    StateMachine.Set(LedgeGrabState);
+                }
+                else if (IsGrabbingWall != 0) {
                     StateMachine.Set(OnWallState, true);
                 }
                 else {
@@ -71,12 +79,13 @@ public class PlayerMovement : Character {
         }
     }
 
-    private void MoveWithInput() {
+    private void HandleMoveInput() {
+        if (DisableHorizontalMovement) return;
         ApplyAccelerationX(Input.HorizontalMovement * MovementParams.HorizontalAcceleration);
     }
 
 
-    private void JumpWithInput() {
+    private void HandleJumpInput() {
         if (Input.Jump && !JumpingThroughPlatform) {
             if (Input.VerticalMovement < 0 && GroundCheck.IsTouchingLayer("Platforms") && Body.linearVelocityY == 0) {
                 JumpDownFromPlatform();

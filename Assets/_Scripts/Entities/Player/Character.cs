@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -21,6 +22,9 @@ public class Character : MonoBehaviour {
     [Header("Ledge grabbing")]
     public LedgeGrab LeftLedgeGrab;
     public LedgeGrab RightLedgeGrab;
+    public Vector2 HangOffset;
+    public Vector2 ClimbOffset;
+    internal Vector2 GrabbableLedgePosition;
 
     public StateMachine<Character> StateMachine = new StateMachine<Character>();
 
@@ -38,6 +42,8 @@ public class Character : MonoBehaviour {
     public int WallJumpDirection { get; set; }
     public float HorizontalDrag { get; set; } = 0;
     public int IsGrabbingWall => (!IsGrounded && Input.Grab && Body.linearVelocityY <= 0.1f) ? IsTouchingWall : 0;
+    private int IsTouchingLedge => LeftLedgeGrab.IsTouching ? -1 : RightLedgeGrab.IsTouching ? 1 : 0;
+    public int IsGrabbingLedge => (!IsGrounded && Input.Grab && Body.linearVelocityY <= 0.1f) ? IsTouchingLedge : 0;
     public bool OverrideFacingDirecion { get; set; }
 
 
@@ -133,6 +139,9 @@ public class Character : MonoBehaviour {
     }
     #endregion
 
+    internal void GrabLedge() {
+        Body.transform.position = GrabbableLedgePosition - HangOffset;
+    }
 
 #if UNITY_EDITOR
     private void OnDrawGizmos() {
@@ -145,5 +154,6 @@ public class Character : MonoBehaviour {
             UnityEditor.Handles.Label(transform.position + Vector3.up * 1, "State: " + string.Join(" > ", states));
         }
     }
+
 #endif
 }

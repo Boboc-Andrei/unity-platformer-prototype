@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8249348580638682277}
   - component: {fileID: 8283049854063954005}
-  - component: {fileID: 4143009363477826782}
   m_Layer: 11
   m_Name: LedgeHitBox
   m_TagString: Untagged
@@ -69,17 +68,3 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.4
---- !u!114 &4143009363477826782
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2397253600246880712}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8561c7ab598b09545b7bcc6c07d39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  StartOffset: {x: 0.625, y: -0.75}
-  EndOffset: {x: -0.375, y: 1.125}

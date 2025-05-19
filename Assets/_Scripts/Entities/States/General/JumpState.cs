@@ -11,8 +11,8 @@ internal class JumpState : CharacterState {
 
     public override void Do() {
         if (Character.Body.linearVelocityY <= 0 || Character.IsGrounded) {
-            IsComplete = true;
             Character.IsJumping = false;
+            IsComplete = true;
         }
         else if (Character.Input.CancelJump) {
             Character.Body.linearVelocityY *= Character.MovementParams.JumpCutoffFactor;
